@@ -6,7 +6,17 @@
 
 set -e  
 
+# if FIB file is assigned use it instead
 fib=$(jq -r .fib config.json)
+source=${fib##*/}
+ln -sf ${fib} ${source}
+mapping=$(jq -r .mapping config.json)
+if [ -f "$mapping" ]
+then 
+  ln -sf ${mapping} ${source}.hcp1065.inv.mapping.gz
+fi
+
+
 fiber_count=$(jq -r .fiber_count config.json)
 cmd=$(jq -r .cmd config.json)
 
