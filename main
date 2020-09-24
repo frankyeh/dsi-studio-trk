@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l vmem=8gb
+#PBS -l walltime=12:00:00
+#PBS -N dsi-studio-trk
+
+set -e  
+
+fib=$(jq -r .fib config.json)
+fiber_count=$(jq -r .fiber_count config.json)
+cmd=$(jq -r .cmd config.json)
+
+# create symbolic link here
+source=${fib##*/}
+ln -sf ${fib} ${source}
+
+time singularity exec -e docker://dsistudio/dsistudio dsi_studio --action=trk --source=${source} --fiber_count=1000000 ${cmd}
+
+# move file to fib folder
+mkdir -p tt
+mv *.tt.gz tt/tt.gz
