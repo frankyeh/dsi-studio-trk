@@ -24,7 +24,12 @@ cmd=$(jq -r .cmd config.json)
 source=${fib##*/}
 ln -sf ${fib} ${source}
 
-time singularity exec -e docker://dsistudio/dsistudio dsi_studio --action=trk --source=${source} --fiber_count=1000000 ${cmd}
+time singularity exec -e docker://dsistudio/dsistudio dsi_studio --action=trk --source=${source} --report=report.txt --fiber_count=1000000 ${cmd}
+
+report=$( cat report.txt )
+
+# generate report
+echo "{ \"meta\": {\"method\": \"${report}\"}, \"brainlife\": [ {\"type\": \"info\", \"msg\": \"${report}\"} ] }" > product.json
 
 # move file to fib folder
 mkdir -p tt
